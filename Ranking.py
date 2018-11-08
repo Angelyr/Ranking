@@ -1,5 +1,8 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> parent of 9575643... added more to ranking
 #Angel
 
 print('Ranking is now running')
@@ -20,4 +23,7 @@ def combineRanks():
 #sends the urls to the message sender
 def sendUrls():
     return
+<<<<<<< HEAD
+>>>>>>> parent of 9575643... added more to ranking
+=======
 >>>>>>> parent of 9575643... added more to ranking
