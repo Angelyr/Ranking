@@ -3,14 +3,18 @@
 print('Ranking is now running')
 rankedList = []
 
+#receives msg from rest layer
 def parseMsg(msg):
     return
 
-def createRanks(document):
+#creates a rank for each document
+def createRank(document):
     return
 
-def combineRanks(ranks):
+#combines the ranks of documents with the same url
+def combineRanks():
     return
 
+#sends the urls to the message sender
 def sendUrls():
     return

@@ -7,7 +7,9 @@ def makeNGrams(query):
             output.append(words[i:i+n])
     return output
 
+'''
 #testing
 test = 'How to change the world in 20 days'
 for ngram in makeNGrams(test):
     print(ngram)
+'''
