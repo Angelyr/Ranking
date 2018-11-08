@@ -9,4 +9,3 @@ See this link for help: http://flask.pocoo.org/docs/1.0/quickstart/
 
 Then run with flask run
 
-$env:FLASK_APP = "MessageReceiver.py"
