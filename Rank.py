@@ -24,7 +24,8 @@ class Rank:
     def calculateRankScore(self):
         self.getWeights()
         # calculate the total rank score 
-        return self.getPageRankScore() + self.getPositionScore() + self.getFrequencyScore() + self.getSectionScore() + self.getUpdateScore()
+        totalRank = self.getPageRankScore() + self.getPositionScore() + self.getFrequencyScore() + self.getSectionScore() + self.getUpdateScore()
+        return totalRank
     
     def getPageRankScore(self):
         # get the page rank for this webpage
