@@ -1,35 +1,41 @@
 import json
-#from Rank import Rank
+from Rank import Rank
 #from MessageSender import sendUrls
 
-print('Ranking is now running')
 rankedList = []
 
 #receives msg from rest layer
 def parseMsg(ngram, msg):
     for item in data["documents"]:
-        rank = temp(ngram, item["document_id"], item["pagerank"], item["frequency"], item["position"], item["date_created"], item["date_updated"], item["section"])
-
+        rank = Rank(ngram, item["document_id"], item["pagerank"], item["position"], item["frequency"], item["section"], item["date_created"])
         rankedList.append(rank)
-        print(rankedList)
     return
 
-def temp(a,b,c,d,e,f,g,h):
-    return (a,b,c,d,e,f,g,h)
 
 #combines the ranks of documents with the same url
 def combineRanks():
     for i in range(len(rankedList)-1):
-        if rankedList[i][1] == rankedList[i+1][1]:
-            if(rankedList[i][1] > rankedList[i+1][1]):
+        if rankedList[i].docID == rankedList[i+1].docID:
+            if(rankedList[i].totalRank > rankedList[i+1].totalRank):
                 rankedList.pop(i+1)
-            else
+            else:
                 rankedList.pop(i)
-             
+            continue
+    sendDocuments()
     return
 
 #sends the urls to the message sender
 def sendDocuments():
+    pages = []
+    for doc in rankedList:
+        pages.append({
+            "document_id": doc.docID,
+            "rank": doc.totalRank
+        })
+    pages = {
+        "pages": pages
+    }
+    sendUrls(pages)
     return
 
 data = {
@@ -45,7 +51,7 @@ data = {
 			"section" : "1"
         },
         {
-            "document_id" : 2,
+            "document_id" : 1,
 			"url" : "2",
 			"pagerank": 2.0,
 			"frequency": 2,
@@ -57,5 +63,7 @@ data = {
     ]
 }
 parseMsg("hello",data)
+combineRanks()
+
 #msg = json.dumps(data, sort_keys=True, indent=4, separators=(',', ': '))
 #parseMsg(msg)
