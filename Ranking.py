@@ -1,10 +1,10 @@
 import json
 from Rank import Rank
-#from MessageSender import sendUrls
+from MessageHandler import sendUrls
 
 rankedList = []
 
-#receives msg from rest layer
+#receives documents from rest layer. Turns it into rank objects. Adds it to rankedList
 def parseMsg(ngram, msg):
     for item in data["documents"]:
         rank = Rank(ngram, item["document_id"], item["pagerank"], item["position"], item["frequency"], item["section"], item["date_created"])
@@ -12,7 +12,7 @@ def parseMsg(ngram, msg):
     return
 
 
-#combines the ranks of documents with the same url
+#combines the ranks of documents with the same docID
 def combineRanks():
     for i in range(len(rankedList)-1):
         if rankedList[i].docID == rankedList[i+1].docID:
@@ -38,6 +38,7 @@ def sendDocuments():
     sendUrls(pages)
     return
 
+#Testing Purposes
 data = {
     "documents":[
         {

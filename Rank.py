@@ -71,7 +71,7 @@ class Rank:
             self.weightDict[key] = float(val)
         file.close()
 
-
+#Testing 
 r = Rank('dog', 123, 3.5, 150, 3, 'title', "2018-11-05T16:18:03+0000")
 print(r.getWeights())
 print("Update score:", r.getUpdateScore())

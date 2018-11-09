@@ -1,6 +1,8 @@
 from flask import Flask, request, jsonify
 import time
 import requests
+from TextProcessing import makeNGrams
+from Ranking import parseMsg
 
 app = Flask(__name__)
 
@@ -21,7 +23,8 @@ def sendIndexReq(nGram):
 	return r
 
 #Sends urls to U/I
-def sendUrls()
+def sendUrls(pages):
+	return
 
 
 # Call functions in other files to do the business logic of ranking
