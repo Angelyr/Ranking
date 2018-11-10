@@ -6,6 +6,7 @@ from dateutil import parser
 class Rank: 
     # function is called by Rank(nGram, docID, pageRank, position, frequency, section, lastUpdated)
     def __init__(self, nGram, docID, pageRank, position, frequency, section, lastUpdated):
+        # set parameters
         self.nGram = nGram             # string for the n-gram  
         self.docID = docID             # int for the document ID for this page 
         self.pageRank = pageRank       # int for the document page rank
