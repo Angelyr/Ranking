@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 import time
 import requests
 from TextProcessing import makeNGrams
-from Ranking import parseMsg
+import Ranking
 
 app = Flask(__name__)
 

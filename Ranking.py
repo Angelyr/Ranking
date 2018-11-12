@@ -1,6 +1,5 @@
 import json
 from Rank import Rank
-from MessageHandler import sendUrls
 
 rankedList = []
 
@@ -22,6 +21,10 @@ def combineRanks():
                 rankedList.pop(i)
             continue
     sendDocuments()
+    return
+
+#temp
+def sendUrls(pages):
     return
 
 #sends the urls to the message sender
