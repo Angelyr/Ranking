@@ -17,7 +17,7 @@ class Rank:
         self.totalRank = 0             # int for the totalrank for this n-gram and this document 
         self.weightDict = {}           # dictionary for the weights of each ranking factor 
 
-    def _lt_(self, other):
+    def __lt__(self, other):
         # less than method that will be used when calling sort()
         return self.totalRank < other.totalRank
 

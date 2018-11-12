@@ -1,4 +1,5 @@
 import json
+import threading
 from Rank import Rank
 
 rankedList = []
@@ -13,6 +14,7 @@ def parseMsg(ngram, msg):
 
 #combines the ranks of documents with the same docID
 def combineRanks():
+    rankedList.sort()
     for i in range(len(rankedList)-1):
         if rankedList[i].docID == rankedList[i+1].docID:
             if(rankedList[i].totalRank > rankedList[i+1].totalRank):
@@ -21,10 +23,6 @@ def combineRanks():
                 rankedList.pop(i)
             continue
     sendDocuments()
-    return
-
-#temp
-def sendUrls(pages):
     return
 
 #sends the urls to the message sender
@@ -38,34 +36,17 @@ def sendDocuments():
     pages = {
         "pages": pages
     }
-    sendUrls(pages)
+    printJSON(pages)
+    return pages
+
+#prints JSON in format that is easier to read
+def printJSON(data):
+    print(json.dumps(data, sort_keys=True, indent=2, separators=(',', ': ')))
     return
 
-#Testing Purposes
-data = {
-    "documents":[
-        {
-            "document_id" : 1,
-			"url" : "1",
-			"pagerank": 1.0,
-			"frequency": 1,
-			"position" : 1,
-			"date_created" : "1",
-			"date_updated" : "1",
-			"section" : "1"
-        },
-        {
-            "document_id" : 1,
-			"url" : "2",
-			"pagerank": 2.0,
-			"frequency": 2,
-			"position" : 2,
-			"date_created" : "2",
-			"date_updated" : "2",
-			"section" : "2"
-        }
-    ]
-}
+
+fp = open('input.json')
+data = json.load(fp)
 parseMsg("hello",data)
 combineRanks()
 
