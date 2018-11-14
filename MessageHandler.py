@@ -2,7 +2,9 @@ from flask import Flask, request, jsonify
 import time
 import requests
 from TextProcessing import makeNGrams
-import Ranking
+from Ranking import parseMsg
+from TextProcessing import makeNGrams
+
 
 app = Flask(__name__)
 
@@ -12,9 +14,10 @@ app = Flask(__name__)
 def recvQuery():
 	print(request.args.get('query'))
 	
-	processQuery(request.args.get('query'))
+	rankedList = getRanking(request.args.get('query'))
 	
-	return 'Recvieved your query: ' + request.args.get('query')
+	return rankedList
+	# return 'Recvieved your query: ' + request.args.get('query')
 
 
 # Sends the post request to the index team to return the document features for the given ngram
@@ -23,20 +26,22 @@ def sendIndexReq(nGram):
 	# @TODO fix port, and see if we need to protect against sql injections
 	r = requests.post('localhost:1234', data = {'sql':"SELECT * FROM index WHERE ngram='" + nGram + "';"})
 	print(r.content)
-	
 
 	return r
 
-#Sends urls to U/I
-def sendUrls(pages):
-	return
+# @TODO remove
+# #Sends urls to U/I
+# def sendUrls(pages):
+# 	return
 
 
 # Call functions in other files to do the business logic of ranking
 def getRanking(query):
 	
 	# Call other file to get the n-grams
-	# nGrams = getNgrams(query)
+	nGrams = makeNgrams(query)
+
+	print(mGrams)
 
 	# for each n-gram, send a query to index
 
