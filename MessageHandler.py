@@ -36,8 +36,8 @@ def spoofIndex():
 	spoofFeatures['pagerank'] =	random.random()
 	spoofFeatures['position'] = random.random()
 	spoofFeatures['frequency'] = random.random()
-	spoofFeatures['section'] = random.random()
-	spoofFeatures['date_created'] = random.random()
+	spoofFeatures['section'] = "body"
+	spoofFeatures['date_created'] = "2018-11-05T16:18:03+0000"
 
 	spoofDocuments = {}
 	spoofDocuments["documents"] = []

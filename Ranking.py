@@ -14,7 +14,7 @@ class Ranking:
         return
 
 
-    # @TODO isn't this were the linear combination of the individual ranks should be?
+    # @TODO isn't this where the linear combination of the individual ranks should be?
     #combines the ranks of documents with the same docID
     def combineRanks(self):
 
@@ -60,4 +60,4 @@ def test():
     printJSON(docs)
     return
 
-test()
+# test()

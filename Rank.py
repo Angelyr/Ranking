@@ -13,9 +13,14 @@ class Rank:
         self.frequency = frequency     # int for the frequency of the n-gram on the page 
         self.section = section         # string for the (greatest) section for which the n-gram is located in 
         self.lastUpdated = lastUpdated    # string for the date of when the document was last updated 
-        # initialize fields 
-        self.totalRank = 0             # int for the totalrank for this n-gram and this document 
+        
         self.weightDict = {}           # dictionary for the weights of each ranking factor 
+
+        # read in weights 
+        self.getWeights()
+        # initialize fields 
+        self.totalRank = self.calculateRankScore()             # int for the totalrank for this n-gram and this document 
+        
 
     def __lt__(self, other):
         # less than method that will be used when calling sort()
@@ -25,6 +30,9 @@ class Rank:
         self.getWeights()
         # calculate the total rank score 
         totalRank = self.getPageRankScore() + self.getPositionScore() + self.getFrequencyScore() + self.getSectionScore() + self.getUpdateScore()
+            
+        print("totalRank: ", totalRank)
+
         return totalRank
     
     def getPageRankScore(self):
