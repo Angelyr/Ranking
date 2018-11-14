@@ -14,10 +14,16 @@ class Ranking:
         return
 
 
+    # @TODO isn't this were the linear combination of the individual ranks should be?
     #combines the ranks of documents with the same docID
     def combineRanks(self):
+
+        # @TODO do we need to sort on "docId" or is this default?
         self.rankedList.sort()
+
         for i in range(len(self.rankedList)-1):
+            
+            # If a duplicate id, then pop the smaller one from the list
             if self.rankedList[i].docID == self.rankedList[i+1].docID:
                 if(self.rankedList[i].totalRank > self.rankedList[i+1].totalRank):
                     self.rankedList.pop(i+1)

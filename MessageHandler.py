@@ -17,9 +17,14 @@ def recvQuery():
 	return 'Recvieved your query: ' + request.args.get('query')
 
 
+# Sends the post request to the index team to return the document features for the given ngram
 def sendIndexReq(nGram):
-	r = requests.post('https://httpbin.org/post', data = {'key':'value'})
+	
+	# @TODO fix port, and see if we need to protect against sql injections
+	r = requests.post('localhost:1234', data = {'sql':"SELECT * FROM index WHERE ngram='" + nGram + "';"})
 	print(r.content)
+	
+
 	return r
 
 #Sends urls to U/I
