@@ -1,9 +1,14 @@
 from flask import Flask, request, jsonify
 import time
 import requests
+import json
+
 from TextProcessing import makeNGrams
-from Ranking import parseMsg
-from TextProcessing import makeNGrams
+from Ranking import Ranking
+
+# for spoofing
+import random
+random.seed(500)
 
 
 app = Flask(__name__)
@@ -16,48 +21,84 @@ def recvQuery():
 	
 	rankedList = getRanking(request.args.get('query'))
 	
-	return rankedList
-	# return 'Recvieved your query: ' + request.args.get('query')
+	return jsonify(rankedList)
 
 
-# Sends the post request to the index team to return the document features for the given ngram
-def sendIndexReq(nGram):
-	
-	# @TODO fix port, and see if we need to protect against sql injections
-	r = requests.post('localhost:1234', data = {'sql':"SELECT * FROM index WHERE ngram='" + nGram + "';"})
-	print(r.content)
+# Dummy endpoint for spoofing index service
+@app.route('/index', methods=['POST'])
+def spoofIndex():
 
-	return r
+	print(request.form)
 
-# @TODO remove
-# #Sends urls to U/I
-# def sendUrls(pages):
-# 	return
+	spoofFeatures = {}
+
+	spoofFeatures['document_id'] = random.randint(1,10000)
+	spoofFeatures['pagerank'] =	random.random()
+	spoofFeatures['position'] = random.random()
+	spoofFeatures['frequency'] = random.random()
+	spoofFeatures['section'] = random.random()
+	spoofFeatures['date_created'] = random.random()
+
+	spoofDocuments = {}
+	spoofDocuments["documents"] = []
+	spoofDocuments["documents"].append(spoofFeatures)
+
+	return jsonify(spoofDocuments)
+
+
 
 
 # Call functions in other files to do the business logic of ranking
 def getRanking(query):
 	
 	# Call other file to get the n-grams
-	nGrams = makeNgrams(query)
+	ngrams = makeNGrams(query)
 
-	print(mGrams)
+	print(ngrams)
+
+	# create a ranking class to keep track of the ngram features
+	ranking = Ranking()
 
 	# for each n-gram, send a query to index
+	for ngram in ngrams:
+		# Send the nNgrams to the Index team to get the document features
+		r = sendIndexReq( " ".join(ngram) )
 
-	# Send the nNgrams to the Index team to get the document features
-	# r = sendIndexReq(nNgrams)
-	r = sendIndexReq(query)
+		# @TODO parse the response and handle error 
+		parsedMsg = json.loads(r.text)
 
-	# collect all the nGramFeatures into a data structure (list of dicts?)
-	# nGramFeatures = 
+		print("parsedMsg:")
+		print(parsedMsg)
 
-	# sent the result to the ranking class, receive ranked list
-	# rankedList = calculateRanks(nGramFeatures)
-	# return rankedList
+		ranking.addDocuments(ngram, parsedMsg)
+
+
+	# Calculate the ranks within the ranking class
+	ranking.combineRanks()
+	rankedList = ranking.getDocuments()
+
+	return rankedList
+
+
+# Sends the post request to the index team to return the document features for the given ngram
+def sendIndexReq(nGram):
+	
+	print(nGram)
+
+	sql = "SELECT * FROM index WHERE ngram='" + nGram + "';"
+
+	# @TODO fix port, and see if we need to protect against sql injections
+	r = requests.post('http://localhost:5000/index', data = {'sql':sql})
+
+	# @TODO error handling
+
+	return r
+
+
+
 
 
 
 if __name__ == "__main__":
 	# @TODO remove debug before production
-	app.run(debug=True)
+	app.run(debug=True, host='0.0.0.0', port=5000)
