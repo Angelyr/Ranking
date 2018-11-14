@@ -3,6 +3,7 @@ import time
 import requests
 from TextProcessing import makeNGrams
 from Ranking import parseMsg
+from TextProcessing import makeNGrams
 
 app = Flask(__name__)
 
@@ -12,26 +13,34 @@ app = Flask(__name__)
 def recvQuery():
 	print(request.args.get('query'))
 	
-	processQuery(request.args.get('query'))
+	rankedList = getRanking(request.args.get('query'))
 	
-	return 'Recvieved your query: ' + request.args.get('query')
+	return rankedList
+	# return 'Recvieved your query: ' + request.args.get('query')
 
 
+# Sends the POST Request to index in order to recieve the document features
 def sendIndexReq(nGram):
+	
+	# @TODO make a dummy service/file to spoof the index service
 	r = requests.post('https://httpbin.org/post', data = {'key':'value'})
 	print(r.content)
+	
 	return r
 
-#Sends urls to U/I
-def sendUrls(pages):
-	return
+# @TODO remove
+# #Sends urls to U/I
+# def sendUrls(pages):
+# 	return
 
 
 # Call functions in other files to do the business logic of ranking
 def getRanking(query):
 	
 	# Call other file to get the n-grams
-	# nGrams = getNgrams(query)
+	nGrams = makeNgrams(query)
+
+	print(mGrams)
 
 	# for each n-gram, send a query to index
 
