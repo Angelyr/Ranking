@@ -15,17 +15,23 @@ class Rank:
         self.lastUpdated = lastUpdated    # string for the date of when the document was last updated 
         # initialize fields 
         self.totalRank = 0             # int for the totalrank for this n-gram and this document 
-        self.weightDict = {}           # dictionary for the weights of each ranking factor 
+        self.weightDict = {}           # dictionary for the weights of each ranking factor
+        self.calculateRankScore()
 
     def __lt__(self, other):
         # less than method that will be used when calling sort()
         return self.totalRank < other.totalRank
 
+    #add Ngram to Rank for the purpose of keywords
+    def addNgram(self, ngram):
+        if ngram not in self.nGram:
+            self.nGram += " " + ngram
+
     def calculateRankScore(self):
         self.getWeights()
         # calculate the total rank score 
-        totalRank = self.getPageRankScore() + self.getPositionScore() + self.getFrequencyScore() + self.getSectionScore() + self.getUpdateScore()
-        return totalRank
+        self.totalRank = self.getPageRankScore() + self.getPositionScore() + self.getFrequencyScore() + self.getSectionScore() + self.getUpdateScore()
+        return self.totalRank
     
     def getPageRankScore(self):
         # get the page rank for this webpage
@@ -71,13 +77,14 @@ class Rank:
             self.weightDict[key] = float(val)
         file.close()
 
-#Testing 
-r = Rank('dog', 123, 3.5, 150, 3, 'title', "2018-11-05T16:18:03+0000")
-print(r.getWeights())
-print("Update score:", r.getUpdateScore())
-print("Section score:", r.getSectionScore())
-print("Frequency score:", r.getFrequencyScore())
-print("Page rank score:", r.getPageRankScore())
-print("Position score:", r.getPositionScore())
-print("Total rank score:", r.calculateRankScore())
+def test():
+    r = Rank('dog', 123, 3.5, 150, 3, 'title', "2018-11-05T16:18:03+0000")
+    print(r.getWeights())
+    print("Update score:", r.getUpdateScore())
+    print("Section score:", r.getSectionScore())
+    print("Frequency score:", r.getFrequencyScore())
+    print("Page rank score:", r.getPageRankScore())
+    print("Position score:", r.getPositionScore())
+    print("Total rank score:", r.calculateRankScore())
 
+#test
