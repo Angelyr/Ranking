@@ -74,7 +74,6 @@ def getRanking(query):
 
 
 	# Calculate the ranks within the ranking class
-	ranking.combineRanks()
 	rankedList = ranking.getDocuments()
 
 	return rankedList
