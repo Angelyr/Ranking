@@ -19,15 +19,15 @@ class Ranking:
     #Output: the id of the rank object
     #SideEffect: none
     #Purpose: used to sort rankedList by ID
-    def sortByID(self, rank):
+    def __sortByID(self, rank):
         return rank.docID
 
     #Input: none
     #Output: none
     #SideEffect: sorts rankedList by id and removes ranks with the id that have lower total rank
-    #Purpose: used to only return one of each document
-    def combineRanks(self):
-        self.rankedList.sort(key=self.sortByID)
+    #Purpose: used by getDocuments to only return one of each document
+    def __combineRanks(self):
+        self.rankedList.sort(key=self.__sortByID)
         for i in range(len(self.rankedList)-2):
             #if the IDs match
             if self.rankedList[i].docID == self.rankedList[i+1].docID:
@@ -46,7 +46,7 @@ class Ranking:
     #SideEffect: effects of combineRanks and lists sorted by total rank
     #Purpose: used by message handler to get the list of documents to send to UI
     def getDocuments(self):
-        self.combineRanks()
+        self.__combineRanks()
         self.rankedList.sort(reverse=True)
         pages = []
         for doc in self.rankedList:
