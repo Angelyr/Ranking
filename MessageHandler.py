@@ -6,7 +6,11 @@ import json
 from TextProcessing import makeNGrams
 from Ranking import Ranking
 
-# for spoofing
+# for postgres index team
+import psycopg2
+import pprint
+
+# for spoofing index
 import random
 random.seed(500)
 
@@ -61,6 +65,7 @@ def getRanking(query):
 
 	# for each n-gram, send a query to index
 	for ngram in ngrams:
+
 		# Send the nNgrams to the Index team to get the document features
 		r = sendIndexReq( " ".join(ngram) )
 
@@ -91,6 +96,21 @@ def sendIndexReq(nGram):
 	r = requests.post('http://localhost:5000/index', data = {'sql':sql})
 
 	# @TODO error handling
+
+
+	# connect to postgresql index team
+	conn_string = "host='green-z.cs.rpi.edu' dbname='index' user='ranking' password='ranking'"
+
+	conn = psycopg2.connect(conn_string)
+
+	cursor = conn.cursor()
+
+
+	cursor.execute(sql)
+
+	records = cursor.fetchall()
+
+	pprint.pprint(records)
 
 	return r
 
