@@ -35,27 +35,34 @@ class Rank:
     
     def getPageRankScore(self):
         # get the page rank for this webpage
+        pagerank = self.pageRank
         weight = self.weightDict["pageRank"]
-        return weight * self.pageRank
+        return pagerank * weight
 
 
     def getPositionScore(self):
         # get the position score for the n-gram on this page 
+        position = self.position
         weight = self.weightDict["position"]
-        return self.position * weight
+        return position * weight
     
     def getFrequencyScore(self):
         # get the frequency score for the n-gram on this page
+        freq = self.frequency 
         weight = self.weightDict["frequency"]
-        return self.frequency * weight
+        return freq * weight
     
     def getSectionScore(self):
         # get the section score for the n-gram on this page 
         weight = self.weightDict["section"]
         if (self.section=='title'):
             return 10 * weight
-        elif (self.section == 'header'):
+        elif (self.section == 'description'):
+            return 9 * weight
+        elif (self.section == 'keywords'):
             return 8 * weight
+        elif (self.section == 'header'):
+            return 6 * weight
         elif (self.section == 'body'):
             return 5 * weight
     
