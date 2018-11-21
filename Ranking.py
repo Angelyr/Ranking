@@ -4,15 +4,15 @@ from Rank import Rank
 class Ranking:
     def __init__(self):
         self.rankedList = []
+        self.tempList = []
 
     #Input: ngram string and JSON message
     #Output: none
     #SideEffect: adds rank to rankedList for each document in msg
     #Purpose: used by MessageHandler to add documents to rank
-    def addDocuments(self, ngram, msg):
-        for item in msg["documents"]:
-            rank = Rank(ngram, item["document_id"], item["pagerank"], item["position"], item["frequency"], item["section"], item["date_created"])
-            self.rankedList.append(rank)
+    def addNgram(self, ngram, data):
+        for item in data:
+            self.tempList.append((item[0],item[1],0,0,item[6]))
         return
 
     #Input: rank object
@@ -71,9 +71,8 @@ def printJSON(data):
 #Testing purposes
 def test():
     rankings = Ranking()
-    rankings.addDocuments("input1", json.load(open('tests/input.json')))
-    rankings.addDocuments("input2", json.load(open('tests/input2.json')))
-    docs = rankings.getDocuments()
-    printJSON(docs)
+    rankings.addNgram("input1", [("fish",1,"t","t","t",0.666600,1.000000),("tropical",1,"t","t","t",0.000000,0.000000)])
+    #docs = rankings.getDocuments()
+    #printJSON(docs)
     return
 #test()
