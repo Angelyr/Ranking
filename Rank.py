@@ -13,12 +13,8 @@ class Rank:
         self.frequency = frequency     # int for the frequency of the n-gram on the page 
         self.section = section         # string for the (greatest) section for which the n-gram is located in 
         self.lastUpdated = lastUpdated    # string for the date of when the document was last updated 
-        
-        self.weightDict = {}           # dictionary for the weights of each ranking factor 
-
-        # read in weights 
+        self.weightDict = {}           # dictionary for the weights of each ranking factor
         self.getWeights()
-        # initialize fields 
         self.totalRank = self.calculateRankScore()             # int for the totalrank for this n-gram and this document 
         
 
@@ -26,38 +22,47 @@ class Rank:
         # less than method that will be used when calling sort()
         return self.totalRank < other.totalRank
 
+    #add Ngram to Rank for the purpose of keywords
+    def addNgram(self, ngram):
+        if ngram not in self.nGram:
+            self.nGram += " " + ngram
+
     def calculateRankScore(self):
         self.getWeights()
         # calculate the total rank score 
-        totalRank = self.getPageRankScore() + self.getPositionScore() + self.getFrequencyScore() + self.getSectionScore() + self.getUpdateScore()
-            
-        print("totalRank: ", totalRank)
-
-        return totalRank
+        self.totalRank = self.getPageRankScore() + self.getPositionScore() + self.getFrequencyScore() + self.getSectionScore() + self.getUpdateScore()
+        return self.totalRank
     
     def getPageRankScore(self):
         # get the page rank for this webpage
+        pagerank = self.pageRank
         weight = self.weightDict["pageRank"]
-        return weight * self.pageRank
+        return pagerank * weight
 
 
     def getPositionScore(self):
         # get the position score for the n-gram on this page 
+        position = self.position
         weight = self.weightDict["position"]
-        return self.position * weight
+        return position * weight
     
     def getFrequencyScore(self):
         # get the frequency score for the n-gram on this page
+        freq = self.frequency 
         weight = self.weightDict["frequency"]
-        return self.frequency * weight
+        return freq * weight
     
     def getSectionScore(self):
         # get the section score for the n-gram on this page 
         weight = self.weightDict["section"]
         if (self.section=='title'):
             return 10 * weight
-        elif (self.section == 'header'):
+        elif (self.section == 'description'):
+            return 9 * weight
+        elif (self.section == 'keywords'):
             return 8 * weight
+        elif (self.section == 'header'):
+            return 6 * weight
         elif (self.section == 'body'):
             return 5 * weight
     
@@ -79,13 +84,14 @@ class Rank:
             self.weightDict[key] = float(val)
         file.close()
 
-#Testing 
-r = Rank('dog', 123, 3.5, 150, 3, 'title', "2018-11-05T16:18:03+0000")
-print(r.getWeights())
-print("Update score:", r.getUpdateScore())
-print("Section score:", r.getSectionScore())
-print("Frequency score:", r.getFrequencyScore())
-print("Page rank score:", r.getPageRankScore())
-print("Position score:", r.getPositionScore())
-print("Total rank score:", r.calculateRankScore())
+def test():
+    r = Rank('dog', 123, 3.5, 150, 3, 'title', "2018-11-05T16:18:03+0000")
+    print(r.getWeights())
+    print("Update score:", r.getUpdateScore())
+    print("Section score:", r.getSectionScore())
+    print("Frequency score:", r.getFrequencyScore())
+    print("Page rank score:", r.getPageRankScore())
+    print("Position score:", r.getPositionScore())
+    print("Total rank score:", r.calculateRankScore())
 
+#test
