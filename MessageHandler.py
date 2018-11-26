@@ -18,6 +18,15 @@ random.seed(500)
 app = Flask(__name__)
 
 
+# Global psql connection vars
+# connect to postgresql index team
+conn_string = "host='green-z.cs.rpi.edu' dbname='index' user='ranking' password='ranking'"
+
+conn = psycopg2.connect(conn_string)
+
+cursor = conn.cursor()
+
+
 # Receives the UI team's query and calls getRanking to get ranking results 
 @app.route('/search', methods=['GET'])
 def recvQuery():
@@ -63,19 +72,25 @@ def getRanking(query):
 	# create a ranking class to keep track of the ngram features
 	ranking = Ranking()
 
+	ids = set()
+
 	# for each n-gram, send a query to index
 	for ngram in ngrams:
 
 		# Send the nNgrams to the Index team to get the document features
-		r = sendIndexReq( " ".join(ngram) )
+		records = sendIndexReq( " ".join(ngram) )
 
-		# @TODO parse the response and handle error 
-		parsedMsg = json.loads(r.text)
+		ranking.addNgram(records)
 
-		print("parsedMsg:")
-		print(parsedMsg)
+		# loop through the results and add the stats to Ranking class
+		for record in records:
+			# save the document id so we can get more statistics in a separate call
+			ids.add(record[1])
 
-		ranking.addDocuments(ngram, parsedMsg)
+	additionalStatList = sendIndexDocumentReq(ids)
+	for additionalStat in additionalStatList:
+		ranking.addMoreStats(additionalStat)
+
 
 
 	# Calculate the ranks within the ranking class
@@ -91,30 +106,32 @@ def sendIndexReq(nGram):
 
 	sql = "SELECT * FROM index WHERE ngram='" + nGram + "';"
 
-	# @TODO fix port, and see if we need to protect against sql injections
-	r = requests.post('http://localhost:5000/index', data = {'sql':sql})
-
-	# @TODO error handling
-
-
-	# connect to postgresql index team
-	conn_string = "host='green-z.cs.rpi.edu' dbname='index' user='ranking' password='ranking'"
-
-	conn = psycopg2.connect(conn_string)
-
-	cursor = conn.cursor()
-
+	# @TODO remove spoofing 
+	# r = requests.post('http://localhost:5000/index', data = {'sql':sql})
 
 	cursor.execute(sql)
 
 	records = cursor.fetchall()
 
-	pprint.pprint(records)
+	# pprint.pprint(records)
 
-	return r
+	return records
 
 
+def sendIndexDocumentReq(ids):
 
+	idStrList = ","
+	idStrList = idStrList.join( list( map(str, ids) ) )
+
+	# @TODO determine if should use regular pagerank or norm_pagerank
+	sql = "SELECT id, pagerank, date_updated FROM documents WHERE id IN (" + idStrList + ");"
+	# sql = "SELECT id, norm_pagerank, date_updated FROM documents WHERE id IN (" + idStrList + ");"
+
+	cursor.execute(sql)
+
+	records = cursor.fetchall()
+
+	return records
 
 
 

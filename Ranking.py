@@ -12,6 +12,7 @@ class Ranking:
     #Purpose: used by MessageHandler to add documents to rank
     def addNgram(self, data):
         for item in data:
+
             section = 'body'
             if(item[2] == 't'): section = 'title'
             if(item[5] > 0): section = 'header'
@@ -19,10 +20,12 @@ class Ranking:
             docID = item[1]
             pageRank = 0
             position = 0
-            frequency = item[6]
+            frequency = float(item[6])
             date = 0
             temp = (nGram, docID, pageRank, position, frequency, section, date)
             self.statsList.append(temp)
+        
+
         return
 
     #Input: data in format (docID,pageRank,date)
@@ -30,18 +33,22 @@ class Ranking:
     #SideEffect: adds Rank object to rankList. Ramoves matching docs in statsList
     #Purpose: used by MessageHandler to add documents to rank
     def addMoreStats(self, data):
+
         for item in list(self.statsList):
+            
             if(data[0] == item[1]):
+
                 nGram = item[0]
                 docID = item[1]
-                pageRank = data[1]
+                pageRank = float(data[1])
                 position = 0
-                frequency = item[4]
+                frequency = float(item[4])
                 section = item[5]
-                date = data[2]
+                date = str(data[2])
                 temp=Rank(nGram, docID, pageRank, position, frequency, section, date)
                 self.rankList.append(temp)
                 self.statsList.remove(item)
+
         return
 
 
@@ -76,8 +83,10 @@ class Ranking:
     #SideEffect: effects of combineRanks and lists sorted by total rank
     #Purpose: used by message handler to get the list of documents to send to UI
     def getDocuments(self):
+
         self.__combineRanks()
         self.rankList.sort(reverse=True)
+
         pages = []
         for doc in self.rankList:
             pages.append({
