@@ -15,7 +15,8 @@ class Rank:
         self.lastUpdated = lastUpdated    # string for the date of when the document was last updated 
         self.weightDict = {}           # dictionary for the weights of each ranking factor
         self.getWeights()
-        self.totalRank = self.calculateRankScore()             # int for the totalrank for this n-gram and this document 
+        self.dateScore = self.fixDate()
+        self.totalRank = 0            # int for the totalrank for this n-gram and this document 
         
 
     def __lt__(self, other):
@@ -56,25 +57,28 @@ class Rank:
         # get the section score for the n-gram on this page 
         weight = self.weightDict["section"]
         if (self.section=='title'):
-            return 10 * weight
+            return 1 * weight
         elif (self.section == 'description'):
-            return 9 * weight
+            return 0.9 * weight
         elif (self.section == 'keywords'):
-            return 8 * weight
+            return 0.8 * weight
         elif (self.section == 'header'):
-            return 6 * weight
+            return 0.7 * weight
         elif (self.section == 'body'):
-            return 5 * weight
+            return 0.6 * weight
     
-    def getUpdateScore(self): 
-        # get the update score for this webpage
-        weight = self.weightDict["lastUpdated"]
-
+    def fixDate(self):
         # parse the date string into a date object
         dt = parser.parse(self.lastUpdated)
         d = datetime.datetime(dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second)
         day_diff = datetime.datetime.now() - d
-        return ((1/day_diff.days) * weight)
+        return 1/day_diff.days
+
+    def getUpdateScore(self): 
+        # get the update score for this webpage
+        weight = self.weightDict["lastUpdated"]
+
+        return (self.dateScore * weight)
 
     def getWeights(self):
         # get weights from the text file -- create a dictionary with the ranking factors as the keys, and the weights as the values 
@@ -94,4 +98,4 @@ def test():
     print("Position score:", r.getPositionScore())
     print("Total rank score:", r.calculateRankScore())
 
-test()
+# test()

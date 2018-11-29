@@ -56,6 +56,42 @@ class Ranking:
     def __sortByID(self, rank):
         return rank.docID
 
+    # normalize the different scores
+    def __normalizeScores(self):
+        maxPageRank = 0
+        minPageRank = 999999
+        # maxPosition = 0
+        # minPosition = 999999
+        maxFrequency = 0
+        minFrequency = 999999
+        maxDate = 0
+        minDate = 999999
+        for rank in self.rankList:
+            if rank.pageRank > maxPageRank:
+                maxPageRank = rank.pageRank
+            if rank.pageRank < minPageRank:
+                minPageRank = rank.pageRank
+            # if rank.position > maxPosition:
+            #     maxPosition = rank.position
+            # if rank.position < minPosition:
+            #     minPosition = rank.position
+            if rank.frequency > maxFrequency:
+                maxFrequency = rank.frequency
+            if rank.frequency < minFrequency:
+                minFrequency = rank.frequency
+            if rank.dateScore > maxDate:
+                maxDate = rank.dateScore
+            if rank.dateScore < minDate:
+                minDate = rank.dateScore
+
+        for r in self.rankList:
+            r.pageRank = (r.pageRank - minPageRank) / (maxPageRank - minPageRank)
+            # r.position = (r.position - minPosition) / (maxPosition - minPosition)
+            r.frequency = (r.frequency - minFrequency) / (maxFrequency - minFrequency)
+            r.dateScore = (r.dateScore - minDate) / (maxDate - minDate)
+            r.totalRank = r.calculateRankScore()
+
+
     #Input: none
     #Output: none
     #SideEffect: sorts rankList by id and removes ranks with the id that have lower total rank
@@ -81,6 +117,7 @@ class Ranking:
     #SideEffect: effects of combineRanks and lists sorted by total rank
     #Purpose: used by message handler to get the list of documents to send to UI
     def getDocuments(self):
+        self.__normalizeScores()
         self.__combineRanks()
         self.rankList.sort(reverse=True)
         pages = []
@@ -109,9 +146,9 @@ def test():
     rankings = Ranking()
     rankings.addNgram([("fish",1,"t","t","t",0.6,1.0),("tropical",1,"t","t","t",0,0)])
     rankings.addNgram([("new",2,"t","t","t",1,1),("word",2,"t","t","t",1,1),("bat",2,"t","t","t",1,1),("man",2,"t","t","t",1,1)])
-    rankings.addMoreStats((1,2,"2018-11-05T16:18:03+0000"))
-    rankings.addMoreStats((2,2,"2018-11-05T16:18:03+0000"))
+    rankings.addMoreStats((1,2,"2018-10-05T16:18:03+0000"))
+    rankings.addMoreStats((2,3,"2018-11-05T16:18:03+0000"))
     docs = rankings.getDocuments()
     printJSON(docs)
     return
-#test()
+test()
