@@ -30,8 +30,8 @@ class Rank:
     def calculateRankScore(self):
         self.getWeights()
         # calculate the total rank score 
-        self.totalRank = self.getPageRankScore() + self.getPositionScore() + self.getFrequencyScore() + self.getSectionScore() + self.getUpdateScore()
-        return self.totalRank
+        totalScore = self.getPageRankScore() + self.getPositionScore() + self.getFrequencyScore() + self.getSectionScore() + self.getUpdateScore()
+        return totalScore
     
     def getPageRankScore(self):
         # get the page rank for this webpage
@@ -74,7 +74,7 @@ class Rank:
         dt = parser.parse(self.lastUpdated)
         d = datetime.datetime(dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second)
         day_diff = datetime.datetime.now() - d
-        return (day_diff.days * weight)
+        return ((1/day_diff.days) * weight)
 
     def getWeights(self):
         # get weights from the text file -- create a dictionary with the ranking factors as the keys, and the weights as the values 
@@ -85,7 +85,7 @@ class Rank:
         file.close()
 
 def test():
-    r = Rank('dog', 123, 3.5, 150, 3, 'title', "2018-11-05T16:18:03+0000")
+    r = Rank('dog', 123, 3.5, 100, 3, 'title', "2018-11-05T16:18:03+0000")
     print(r.getWeights())
     print("Update score:", r.getUpdateScore())
     print("Section score:", r.getSectionScore())
@@ -94,4 +94,4 @@ def test():
     print("Position score:", r.getPositionScore())
     print("Total rank score:", r.calculateRankScore())
 
-#test
+test()
