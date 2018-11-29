@@ -21,13 +21,13 @@ app = Flask(__name__)
 # Global psql connection vars
 # connect to postgresql index team
 conn_string = "host='green-z.cs.rpi.edu' dbname='index' user='ranking' password='ranking'"
-
 conn = psycopg2.connect(conn_string)
-
 cursor = conn.cursor()
 
 
-# Receives the UI team's query and calls getRanking to get ranking results 
+# Receives the UI team's query and calls getRanking to get ranking results
+# INPUT: User's query comes from "query" value in url 
+# OUPUT: Returns the ranked list json to the front-end
 @app.route('/search', methods=['GET'])
 def recvQuery():
 	print(request.args.get('query'))
@@ -61,7 +61,9 @@ def spoofIndex():
 
 
 
-# Call functions in other files to do the business logic of ranking
+# Takes in the user query, calls text processing and ranking layers to rank the query and returns a sorted ranked list
+# INPUT: query - user's query string send from UI team
+# OUTPUT: rankedList - sorted ranked list of documents 
 def getRanking(query):
 	
 	# Call other file to get the n-grams
@@ -99,7 +101,9 @@ def getRanking(query):
 	return rankedList
 
 
-# Sends the post request to the index team to return the document features for the given ngram
+# Sends the database request to the index team to return the document features for the given ngram
+# INPUT: ngram - string of the ngram
+# OUTPUT: records - a list of tuples representing the statistics returned from the reverse inex from the index team
 def sendIndexReq(nGram):
 	
 	print(nGram)
@@ -117,7 +121,9 @@ def sendIndexReq(nGram):
 
 	return records
 
-
+# Send the database request to the index team to get the document statistics for a set of document ids
+# INPUT: ids - list of document ids as integers
+# OUTPUT: records - a list of tuples representing the statistics returned from the database (id, pagerank, date_updated)
 def sendIndexDocumentReq(ids):
 
 	idStrList = ","
