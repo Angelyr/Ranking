@@ -68,32 +68,23 @@ def getRanking(query):
 	
 	# Call other file to get the n-grams
 	ngrams = makeNGrams(query)
-
 	print(ngrams)
-
 	# create a ranking class to keep track of the ngram features
 	ranking = Ranking()
-
 	ids = set()
 
-	# for each n-gram, send a query to index
 	for ngram in ngrams:
-
 		# Send the nNgrams to the Index team to get the document features
 		records = sendIndexReq( " ".join(ngram) )
-
 		ranking.addNgram(records)
 
-		# loop through the results and add the stats to Ranking class
 		for record in records:
-			# save the document id so we can get more statistics in a separate call
 			ids.add(record[1])
 
+	# Get the additional statisitics based on the ids from the separate table
 	additionalStatList = sendIndexDocumentReq(ids)
 	for additionalStat in additionalStatList:
 		ranking.addMoreStats(additionalStat)
-
-
 
 	# Calculate the ranks within the ranking class
 	rankedList = ranking.getDocuments()
@@ -107,17 +98,10 @@ def getRanking(query):
 def sendIndexReq(nGram):
 	
 	print(nGram)
-
 	sql = "SELECT * FROM index WHERE ngram='" + nGram + "';"
 
-	# @TODO remove spoofing 
-	# r = requests.post('http://localhost:5000/index', data = {'sql':sql})
-
 	cursor.execute(sql)
-
 	records = cursor.fetchall()
-
-	# pprint.pprint(records)
 
 	return records
 
@@ -132,9 +116,7 @@ def sendIndexDocumentReq(ids):
 	# @TODO determine if should use regular pagerank or norm_pagerank
 	sql = "SELECT id, pagerank, date_updated FROM documents WHERE id IN (" + idStrList + ");"
 	# sql = "SELECT id, norm_pagerank, date_updated FROM documents WHERE id IN (" + idStrList + ");"
-
 	cursor.execute(sql)
-
 	records = cursor.fetchall()
 
 	return records
