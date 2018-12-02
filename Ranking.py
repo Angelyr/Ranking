@@ -85,10 +85,13 @@ class Ranking:
                 minDate = rank.dateScore
 
         for r in self.rankList:
-            r.pageRank = (r.pageRank - minPageRank) / (maxPageRank - minPageRank)
+            if maxPageRank != minPageRank:
+                r.pageRank = (r.pageRank - minPageRank) / (maxPageRank - minPageRank)
             # r.position = (r.position - minPosition) / (maxPosition - minPosition)
-            r.frequency = (r.frequency - minFrequency) / (maxFrequency - minFrequency)
-            r.dateScore = (r.dateScore - minDate) / (maxDate - minDate)
+            if maxFrequency != minFrequency: 
+                r.frequency = (r.frequency - minFrequency) / (maxFrequency - minFrequency)
+            if maxDate != minDate:
+                r.dateScore = (r.dateScore - minDate) / (maxDate - minDate)
             r.totalRank = r.calculateRankScore()
 
 
@@ -151,4 +154,4 @@ def test():
     docs = rankings.getDocuments()
     printJSON(docs)
     return
-test()
+# test()

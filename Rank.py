@@ -77,7 +77,6 @@ class Rank:
     def getUpdateScore(self): 
         # get the update score for this webpage
         weight = self.weightDict["lastUpdated"]
-
         return (self.dateScore * weight)
 
     def getWeights(self):
