@@ -31,8 +31,12 @@ cursor = conn.cursor()
 @app.route('/search', methods=['GET'])
 def recvQuery():
 	print(request.args.get('query'))
+
+	query = request.args.get('query')
+
+	query = query.lower()
 	
-	rankedList = getRanking(request.args.get('query'))
+	rankedList = getRanking(query)
 	
 	return jsonify(rankedList)
 
