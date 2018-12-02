@@ -22,6 +22,7 @@ app = Flask(__name__)
 # connect to postgresql index team
 conn_string = "host='green-z.cs.rpi.edu' dbname='index' user='ranking' password='ranking'"
 conn = psycopg2.connect(conn_string)
+conn.autocommit = True
 cursor = conn.cursor()
 
 
@@ -30,15 +31,28 @@ cursor = conn.cursor()
 # OUPUT: Returns the ranked list json to the front-end
 @app.route('/search', methods=['GET'])
 def recvQuery():
+
+	print("in rec query")
+
+	emptyRes = {}
+	emptyRes["pages"] = []
+
 	print(request.args.get('query'))
 
 	query = request.args.get('query')
 
+	if not query:
+		return jsonify(emptyRes)
+
+
 	query = query.lower()
-	
+
 	rankedList = getRanking(query)
 	
 	return jsonify(rankedList)
+
+
+	
 
 
 # Dummy endpoint for spoofing index service
@@ -101,11 +115,18 @@ def getRanking(query):
 # OUTPUT: records - a list of tuples representing the statistics returned from the reverse inex from the index team
 def sendIndexReq(nGram):
 	
-	print(nGram)
-	sql = "SELECT * FROM index WHERE ngram='" + nGram + "';"
 
-	cursor.execute(sql)
-	records = cursor.fetchall()
+	try:
+		print(nGram)
+		sql = "SELECT * FROM index WHERE ngram='" + nGram + "';"
+
+		cursor.execute(sql)
+		records = cursor.fetchall()
+	except Exception as ex:
+		print(ex)
+
+		return []
+
 
 	return records
 
@@ -117,11 +138,15 @@ def sendIndexDocumentReq(ids):
 	idStrList = ","
 	idStrList = idStrList.join( list( map(str, ids) ) )
 
-	# @TODO determine if should use regular pagerank or norm_pagerank
-	sql = "SELECT id, pagerank, date_updated FROM documents WHERE id IN (" + idStrList + ");"
-	# sql = "SELECT id, norm_pagerank, date_updated FROM documents WHERE id IN (" + idStrList + ");"
-	cursor.execute(sql)
-	records = cursor.fetchall()
+	try:
+
+		sql = "SELECT id, pagerank, date_updated FROM documents WHERE id IN (" + idStrList + ");"
+		# sql = "SELECT id, norm_pagerank, date_updated FROM documents WHERE id IN (" + idStrList + ");"
+		cursor.execute(sql)
+		records = cursor.fetchall()
+	except Exception as ex:
+		print(ex)
+		return []
 
 	return records
 

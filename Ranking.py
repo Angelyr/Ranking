@@ -100,6 +100,10 @@ class Ranking:
     #SideEffect: sorts rankList by id and removes ranks with the id that have lower total rank
     #Purpose: used by getDocuments to only return one of each document
     def __combineRanks(self):
+
+        if not self.rankList:
+            return
+
         self.rankList.sort(key=self.__sortByID)
         combinedList = []
         for i in range(len(self.rankList)-1):
