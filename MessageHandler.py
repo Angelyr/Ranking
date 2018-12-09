@@ -118,9 +118,7 @@ def sendIndexReq(nGram):
 
 	try:
 		print(nGram)
-		sql = "SELECT * FROM index WHERE ngram='" + nGram + "';"
-
-		cursor.execute(sql)
+		cursor.execute("SELECT * FROM index WHERE ngram=%(ngram)s;", {"ngram": nGram})
 		records = cursor.fetchall()
 	except Exception as ex:
 		print(ex)
