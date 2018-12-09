@@ -131,12 +131,12 @@ class Ranking:
 
         for doc in self.rankList:
             pages.append({
-                "document_id": doc.docID,
+                "docid": doc.docID,
                 "keywords" : doc.nGram,
-                "rank": doc.totalRank
+                "score": doc.totalRank
             })
         pages = {
-            "pages": pages
+            "docs": pages
         }
         return pages
 
