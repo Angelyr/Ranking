@@ -157,7 +157,32 @@ def sendIndexDocumentReq(ids):
 	return records
 
 
+def unitTests():
+
+	client = app.test_client()
+	
+	# Tests recv query, which uses all necessary functions for ranking a query
+	test1 = client.get('search', query_string=dict(query='fish'))
+	
+	assert(test1.get_json()['docs'])
+	print("Passed test1")
+
+	test2 = getRanking("fish")
+	assert(test2['docs'])
+	print("Passed test2")
+
+	test3 = sendIndexReq('freds')
+	assert(test3[0][0] == 'freds')
+	print("Passed test3")
+
+	test4 = sendIndexDocumentReq([1,2])
+	assert(test4[0][0] == 1)
+	print("Passed test4")
+
+
 
 if __name__ == "__main__":
-	# @TODO remove debug before production
+		
+	unitTests()
+
 	app.run(debug=True, host='0.0.0.0', port=5000)
