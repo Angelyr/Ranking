@@ -32,10 +32,17 @@ cursor = conn.cursor()
 @app.route('/search', methods=['GET'])
 def recvQuery():
 
+	if len(request.args.get('query')) > 255:
+		err = {}
+		err["error"] = "Query is longer than 255 characters"
+		return jsonify(err)
+
+	startTime = time.time()
+
 	print("in rec query")
 
 	emptyRes = {}
-	emptyRes["pages"] = []
+	emptyRes["docs"] = []
 
 	print(request.args.get('query'))
 
@@ -48,11 +55,14 @@ def recvQuery():
 	query = query.lower()
 
 	rankedList = getRanking(query)
+
+	endTime = time.time()
+
+	responseTime = endTime - startTime
 	
+	rankedList["response_time"] = responseTime
+
 	return jsonify(rankedList)
-
-
-	
 
 
 # Dummy endpoint for spoofing index service
@@ -75,8 +85,6 @@ def spoofIndex():
 	spoofDocuments["documents"].append(spoofFeatures)
 
 	return jsonify(spoofDocuments)
-
-
 
 
 # Takes in the user query, calls text processing and ranking layers to rank the query and returns a sorted ranked list
