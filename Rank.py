@@ -25,7 +25,7 @@ class Rank:
 
     #add Ngram to Rank for the purpose of keywords
     def addNgram(self, ngram):
-        if ngram not in self.nGram:
+        if ngram not in self.nGram.split():
             self.nGram += " " + ngram
 
     def calculateRankScore(self):
