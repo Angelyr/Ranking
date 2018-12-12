@@ -150,6 +150,34 @@ def printJSON(data):
 
 #Testing purposes
 def test():
+    print("test 1:")
+    rankings = Ranking()
+    rankings.addNgram([])
+    rankings.addMoreStats([])
+    docs = rankings.getDocuments()
+    printJSON(docs)
+
+    print("test 2:")
+    rankings = Ranking()
+    rankings.addNgram([])
+    docs = rankings.getDocuments()
+    printJSON(docs)
+
+    print("test 3:")
+    rankings = Ranking()
+    rankings.addNgram([("",0,"","","",0,0)])
+    rankings.addMoreStats((0,0,"2018-11-05T16:18:03+0000"))
+    docs = rankings.getDocuments()
+    printJSON(docs)
+
+    print("test 4:")
+    rankings = Ranking()
+    rankings.addNgram([("fish",1,"t","t","t",0.6,1.0)])
+    rankings.addMoreStats((1,2,"2018-10-05T16:18:03+0000"))
+    docs = rankings.getDocuments()
+    printJSON(docs)
+
+    print("test 5:")
     rankings = Ranking()
     rankings.addNgram([("fish",1,"t","t","t",0.6,1.0),("tropical",1,"t","t","t",0,0)])
     rankings.addNgram([("new",2,"t","t","t",1,1),("word",2,"t","t","t",1,1),("bat",2,"t","t","t",1,1),("man",2,"t","t","t",1,1)])
@@ -158,4 +186,4 @@ def test():
     docs = rankings.getDocuments()
     printJSON(docs)
     return
-# test()
+test()
